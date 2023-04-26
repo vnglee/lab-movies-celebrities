@@ -1,2 +1,15 @@
 //  Add your code here
-const { Schema, movdel } = require('model')
+const { Schema, model } = require('mongoose')
+
+const celebritySchema = new Schema(
+    {
+        name: String,
+        occupation: String,
+        catchphrase: String
+    },
+    {
+        timestamps: true
+    }
+)
+
+module.exports = model('Celebrity', celebritySchema)

@@ -1,12 +1,44 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-router.get('/all-movies', (req, res, next) => {
-    res.render('movies/movies.hbs')
-})
+const Celebrity = require("../models/Celebrity.model");
+const Movie = require("../models/Movie.model");
 
-router.get('/add-movie', (req, res, next) => {
-    res.render('movies/new-movie.hbs')
-})
+router.get("/all-movies", (req, res, next) => {
+  Movie.find()
+    .then((movies) => {
+      res.render("movies/movies.hbs", { movies });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+router.get("/add-movie", (req, res, next) => {
+  Celebrity.find()
+    .then((celebrities) => {
+      res.render("movies/new-movie.hbs", { celebrities });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+router.post("/add-movie", (req, res, next) => {
+  let { title, genre, plot, cast } = req.body;
+  Movie.create({
+    title,
+    genre,
+    plot,
+    cast,
+  })
+    .then((createdMovie) => {
+      console.log("Created movie", createdMovie);
+      res.redirect("/movies/all-movies");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
 module.exports = router;
