@@ -1,36 +1,44 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-const Celebrity = require('../models/Celebrity.model')
+const Celebrity = require("../models/Celebrity.model");
 
-router.get('/all-celebrities', (req, res, next) => {
-    Celebrity.find()
-        .then((celebrities) => {
+router.get("/all-celebrities", (req, res, next) => {
+  Celebrity.find()
+    .then((celebrities) => {
+      res.render("celebrities/celebrities.hbs", { celebrities });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
-            res.render('celebrities/celebrities.hbs', {celebrities})
-        })
-        .catch((err) => {
-            console.log(err)
-        })
-})
+router.get("/add-celebrities", (req, res, next) => {
+  res.render("celebrities/new-celebrity.hbs");
+});
 
-router.get('/add-celebrities', (req, res, next) => {
-    res.render('celebrities/new-celebrity.hbs')
-})
+router.post("/add-celebrities", (req, res, next) => {
+  let newCelebrity = req.body;
 
-router.post('/add-celebrities', (req, res, next) => {
+  Celebrity.create(newCelebrity)
+    .then((createdCelebrity) => {
+      console.log("Created Celebrity:", createdCelebrity);
+      res.redirect("/celebrities/all-celebrities");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
-    let newCelebrity = req.body
-    Celebrity.create(
-        newCelebrity
-        )
-        .then((createdCelebrity) => {
-            console.log('Created celebrity:', createdCelebrity)
-            res.redirect('/celebrities/all-celebrities')
-        })
-        .catch((err) => {
-            console.log(err)
-        })
-})
+router.get("/delete/:id", (req, res) => {
+  const { id } = req.params;
+  Celebrity.findByIdAndDelete(id)
+    .then(() => {
+      res.redirect("/celebrities/all-celebrities");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
 module.exports = router;
